@@ -29,10 +29,7 @@ const sendPassResetOtp = async (req, res) => {
       });
     }
     const resetOtp = generateOTP();
-    // const resetOtpExpiresAt = new Date(Date.now() + 3600000);
-    const resetOtpExpiresAt = 10;
-    const otpExpiresAt = new Date();
-    otpExpiresAt.setMinutes(otpExpiresAt.getMinutes() + resetOtpExpiresAt);
+    const resetOtpExpiresAt = new Date(Date.now() + 3600000);
 
     const resetOtpDoc = new passwordResetModel({
       user: user._id,
@@ -65,7 +62,7 @@ const sendPassResetOtp = async (req, res) => {
 };
 
 const updatePassword = async (req, res) => {
-  const { passOtp, password } = req.body;
+  const { passOtp, userPassword } = req.body;
   try {
     const resetOtpDoc = await passwordResetModel.findOne({
       resetOtp: passOtp,
@@ -85,7 +82,7 @@ const updatePassword = async (req, res) => {
         success: false,
       });
     }
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(userPassword, 10);
 
     user.userPassword = hashedPassword;
     await user.save();
