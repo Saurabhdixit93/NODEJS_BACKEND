@@ -17,7 +17,7 @@ router.post("/login-password", LoginWithPassword);
 // send otp to login
 router.post("/send-loginOtp", sendOtpLogin);
 router.post("/verify-loginOtp", verifyOtpLogin);
-router.get("/get-user", verifyToken, getUserDetails);
+router.get("/get-user/:userId", verifyToken, getUserDetails);
 router.put("/update/:userId", verifyToken, userDetailsUpdate);
 router.delete("/delete/:userId", verifyToken, userAccountDelete);
 module.exports = router;
