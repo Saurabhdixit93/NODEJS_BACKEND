@@ -32,6 +32,7 @@
 
       .header h1 {
         font-size: 24px;
+        padding: 5px;
       }
 
       .content {
@@ -45,6 +46,9 @@
         font-size: 20px;
         text-align: center;
       }
+      strong {
+        color: blue;
+      }
     </style>
   </head>
   <body>
@@ -53,7 +57,7 @@
         <h1>Password Reset Request</h1>
       </div>
       <div class="content">
-        <p>Hello <%= user.legalName %> ,</p>
+        <p>Hello <strong><%= user.legalName %></strong> ,</p>
         <p>
           You have requested to reset your password. Copy this token to complete
           the password reset process:
