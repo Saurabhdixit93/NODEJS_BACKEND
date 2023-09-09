@@ -209,27 +209,41 @@ const LoginWithPassword = async (req, res) => {
 
 const userDetailsUpdate = async (req, res) => {
   const { userId } = req.params;
-  const updateData = req.body;
-  const { userEmail } = req.body;
-  const email = userEmail.toLowerCase();
+  const updateData = req.body; // Get all update data from the request body
+  Object.keys(updateData).forEach((key) => {
+    if (updateData[key] === undefined || updateData[key] === null) {
+      delete updateData[key];
+    }
+  });
+
+  if (Object.keys(updateData).length === 0) {
+    return res.json({
+      success: false,
+      message: "No valid data provided for update.",
+    });
+  }
+
   try {
-    const userEmailExist = await userModel.findOne({ userEmail: email });
+    const userEmailExist = await userModel.findOne({ userEmail: updateData.userEmail });
     if (userEmailExist) {
       return res.json({
         success: false,
         message: "Email already exists in the database.",
       });
     }
-    const result = await userModel.updateOne(
-      { _id: userId },
-      { $set: updateData }
-    );
-    if (result.nModified === 0) {
+    const updateObject = { $set: {} };
+    for (const key of Object.keys(updateData)) {
+      updateObject.$set[key] = updateData[key];
+    }
+
+    const result = await userModel.findByIdAndUpdate(userId, updateObject);
+    if (!result) {
       return res.json({
         success: false,
         message: "User not found or no changes were made.",
       });
     }
+
     return res.json({
       success: true,
       message: "User information has been updated successfully.",
@@ -241,6 +255,8 @@ const userDetailsUpdate = async (req, res) => {
     });
   }
 };
+
+
 
 const userAccountDelete = async (req, res) => {
   const { userId } = req.params;
