@@ -272,8 +272,10 @@ const getUserDetails = async (req, res) => {
       userDetails,
     });
   } catch (error) {
+    console.log(error,"ERROR in user get");
     return res.json({
       success: false,
+      error,
       message: "An error occurred during get user. Please try again later.",
     });
   }
