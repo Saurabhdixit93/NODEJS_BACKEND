@@ -3,6 +3,7 @@ const userModel = require("../models/UserModel");
 const { generateOTP } = require("../utils/GenerateOtp");
 const { sendEmail } = require("../config/nodemailerConfig");
 const ejs = require("ejs");
+const mongoose = require("mongoose");
 const fs = require("fs");
 const { generateUsernameFromEmail } = require("../utils/UsernameGenerate");
 const { generateToken } = require("../utils/jwtGenerate");
@@ -257,6 +258,14 @@ const userAccountDelete = async (req, res) => {
 
 const getUserDetails = async (req, res) => {
   const { userId } = req.params;
+  const isValidObjectId = mongoose.Types.ObjectId.isValid(userId);
+    
+    if (!isValidObjectId) {
+      return res.json({
+        success: false,
+        message: "Invalid user ID format. Please provide a valid user ID.",
+      });
+    }
   try {
     const userDetails = await userModel
       .findById(userId)
