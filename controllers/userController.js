@@ -59,7 +59,7 @@ const UserSignup = async (req, res) => {
     const from = process.env.MAIL_FROM;
     const to = newUser.userEmail;
     const subject = "Account Created Successfuly";
-    const HomeLink = `${req.protocol}://${req.get("host")}`;
+    const HomeLink = process.env.FRONT_END;
     const html = ejs.render(RegisterMessage, {
       newUser,
       HomeLink,
