@@ -210,7 +210,16 @@ const LoginWithPassword = async (req, res) => {
 const userDetailsUpdate = async (req, res) => {
   const { userId } = req.params;
   const updateData = req.body;
+  const { userEmail } = req.body;
+  const email = userEmail.toLowerCase();
   try {
+    const userEmailExist = await userModel.findOne({ userEmail: email });
+    if (userEmailExist) {
+      return res.json({
+        success: false,
+        message: "Email already exists in the database.",
+      });
+    }
     const result = await userModel.updateOne(
       { _id: userId },
       { $set: updateData }
