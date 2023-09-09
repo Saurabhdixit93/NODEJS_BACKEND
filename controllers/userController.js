@@ -207,37 +207,49 @@ const LoginWithPassword = async (req, res) => {
   }
 };
 
-const userDetailsUpdate = async (req, res) => {
-  const { userId } = req.params;
-  const updateData = req.body; // Get all update data from the request body
-  Object.keys(updateData).forEach((key) => {
-    if (updateData[key] === undefined || updateData[key] === null) {
-      delete updateData[key];
-    }
-  });
 
-  if (Object.keys(updateData).length === 0) {
+
+ const userDetailsUpdate = async (req, res, next) => {
+  const { userEmail, legalName, userProfileImage } = req.body;
+  const { userId } = req.params;
+
+  const existingUser = await userModel.findOne({
+    userEmail: userEmail.toLowerCase(),
+  });
+  if (existingUser) {
     return res.json({
       success: false,
-      message: "No valid data provided for update.",
+      message: "Email already exists. Please use a different email.",
+    });
+  }
+
+  const updates = {};
+
+  if (legalName) {
+    updates.legalName = legalName;
+  }
+
+  if (userEmail) {
+    const validEmail = userEmail.toLowerCase();
+    updates.userEmail = validEmail;
+  }
+
+  if (userProfileImage) {
+    updates.userProfileImage = userProfileImage;
+  }
+
+  if (Object.keys(updates).length === 0) {
+    return res.json({
+      success: false,
+      message: "User not found or no changes were made.",
     });
   }
 
   try {
-    const userEmailExist = await userModel.findOne({ userEmail: updateData.userEmail });
-    if (userEmailExist) {
-      return res.json({
-        success: false,
-        message: "Email already exists in the database.",
-      });
-    }
-    const updateObject = { $set: {} };
-    for (const key of Object.keys(updateData)) {
-      updateObject.$set[key] = updateData[key];
-    }
-
-    const result = await userModel.findByIdAndUpdate(userId, updateObject);
-    if (!result) {
+    const updatedUser = await userModel.findByIdAndUpdate(userId, updates, {
+      new: true,
+    });
+    if (!updatedUser) {
       return res.json({
         success: false,
         message: "User not found or no changes were made.",
