@@ -91,9 +91,11 @@ const sendOtpLogin = async (req, res) => {
       });
     }
     const Otp = generateOTP();
-    const otpExpirationMinutes = 10;
-    const otpExpiresAt = new Date();
-    otpExpiresAt.setMinutes(otpExpiresAt.getMinutes() + otpExpirationMinutes);
+    // const otpExpirationMinutes = 10;
+    // const otpExpiresAt = new Date();
+    // otpExpiresAt.setMinutes(otpExpiresAt.getMinutes() + otpExpirationMinutes);
+    const otpExpirationMinutes = 5;
+    const otpExpiresAt = new Date(Date.now() + otpExpirationMinutes * 60000);
     user.userOtp = {
       code: Otp,
       expiresAt: otpExpiresAt,
