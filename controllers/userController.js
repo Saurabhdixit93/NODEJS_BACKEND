@@ -243,7 +243,7 @@ const LoginWithPassword = async (req, res) => {
   if (Object.keys(updates).length === 0) {
     return res.json({
       success: false,
-      message: "User not found or no changes were made.",
+      message: "No changes were made.",
     });
   }
 
